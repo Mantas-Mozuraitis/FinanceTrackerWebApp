@@ -1,1 +1,51 @@
-Home Page
+<%-include ("partials/header.ejs")%>
+<html>
+<body>
+    <div class="wrapper">
+        <!-- NEW DATA INPUT FORM -->
+        <form action="/new-transaction" method="POST">
+            <input type="text" id="name" name="name" placeholder="Name of transaction" required>
+            <select name="category" id="category" required>
+                <option value="in">Money in</option>
+                <option value="out">Money out</option>
+            </select>
+            <input type="amount" id="amount" name="amount" placeholder="Amount of transaction" required>
+    
+            <button type="submit">Add transaction</button>
+        </form>
+
+        <form action="/" method="POST">
+            <select name="field" id="field">
+                <option value="date" selected>Date</option>
+                <option value="category">Category</option>
+                <option value="amount">Amount</option>
+            </select>
+
+            <select name="order" id="order">
+                <option value="ASC">Ascending</option>
+                <option value="DESC" selected>Descending</option>
+            </select>
+
+            <button type="submit">Sort</button>
+        </form>
+
+        <div class="transactions">
+            <% if (locals.transactions) {
+                for (let index = 0; index < transactions.length; index++) {%>
+                    <div class="<%=transactions[index].category == "in"?"in transaction-wrapper":"out transaction-wrapper"%>">
+                        <div class="name"><p><%=transactions[index].name%></p></div>
+                        <div class="amount"><p>£<%=transactions[index].amount%></p></div>
+                    </div>
+                <%}%>
+            <%}else{%>
+                <div class="transaction-wrapper">
+                    <p>No existing transactions!</p>
+                </div>
+            <%}%>
+        </div>  
+
+
+    </div>
+</body>
+</html>
+<%-include ("partials/footer.ejs")%>
