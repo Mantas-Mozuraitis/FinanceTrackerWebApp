@@ -24,28 +24,76 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Default route request
 app.get("/", async (req,res)=>{
     const transactions = await getTransactions();
-    res.render("index.ejs", transactions!=null?{transactions:transactions}:{});
+    const balance = await getBalance();
+    res.render("index.ejs", transactions!=null?{transactions:transactions, balance:balance}:{});
 })
 
 // New-transaction post request 
 app.post("/new-transaction", async (req,res)=>{
+    const amount = req.body.category === "out"? req.body.amount*-1:req.body.amount;
     try {
-        const transaction = await db.query("INSERT INTO transactions (name, category, amount, date) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)", [req.body.name, req.body.category, req.body.amount]);
+        await db.query("INSERT INTO transactions (name, category, amount, date) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)", [req.body.name, req.body.category, amount]);
         res.redirect("/");
     } catch (error) {
         console.error("Error: ", error.message);
-    }
+    } 
+})
+
+// Delete transaction by id
+app.post("/delete/:id", async (req,res)=>{
+    await deleteTransaction(req.params.id);
+    res.redirect("/");
+}) 
+
+// Sort transactions post request
+app.post("/", async (req,res)=>{
+    const sorted = await sortTransactions(req.body.field, req.body.order);
+    const balance = await getBalance();
+    res.render("index.ejs", sorted!=null?{transactions:sorted, balance:balance}:{});
 })
 
 app.listen(port, (req,res)=>{
     console.log(`Server is listening on port: ${port}`);
 }) 
 
+
+// FUNCTIONS 
+async function getBalance(){
+    const transactions = await getTransactions();
+    let balance = 0;
+    if (transactions != null) {
+        for (let index = 0; index < transactions.length; index++) {
+            balance += transactions[index].amount;
+        }
+        return balance;
+    }else{
+        return null;
+    }
+}
+// DATABASE QUERY FUNCTIONS
 async function getTransactions (){
     try {
         const transactions = await db.query("SELECT * FROM transactions ORDER BY date DESC");
         return transactions.rows.length>0?transactions.rows:null;
     } catch (error) {
         console.error("Error: ", error.message);
+    }
+}
+
+async function sortTransactions(field, order){
+    try {
+        const transactions = await db.query(`SELECT * FROM transactions ORDER BY ${field} ${order}`);
+        return transactions.rows.length>0?transactions.rows:null;
+    } catch (error) {
+        console.error("Error: ", error.message);    
+    }
+}
+
+async function deleteTransaction (id){
+    try {
+        await db.query(`DELETE FROM transactions WHERE id = ${id}`);
+        console.log(`Transaction with id = ${id} has been deleted`);
+    } catch (error) {
+        console.error("Error: ", error.message); 
     }
 }

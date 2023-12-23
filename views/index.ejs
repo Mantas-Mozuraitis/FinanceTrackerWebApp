@@ -13,28 +13,40 @@
     
             <button type="submit">Add transaction</button>
         </form>
-
+        <!-- SORTING FORM -->
         <form action="/" method="POST">
-            <select name="field" id="field">
-                <option value="date" selected>Date</option>
+            <select name="field" id="field" required>
+                <option value="" disabled selected>Select a Field</option>
+                <option value="date">Date</option>
                 <option value="category">Category</option>
                 <option value="amount">Amount</option>
+                <option value="name">Name</option>
             </select>
 
-            <select name="order" id="order">
+            <select name="order" id="order" required>
+                <option value="" disabled selected>Select an Order</option>
                 <option value="ASC">Ascending</option>
-                <option value="DESC" selected>Descending</option>
+                <option value="DESC">Descending</option>
             </select>
 
             <button type="submit">Sort</button>
         </form>
-
+        <!-- BALANCE DISPLAY -->
+        <div class="balance">
+            <p>Balance: £<%=locals.balance?balance:0%></p>
+        </div>
+        <!-- TRANSACTIONS FIELD -->
         <div class="transactions">
             <% if (locals.transactions) {
                 for (let index = 0; index < transactions.length; index++) {%>
-                    <div class="<%=transactions[index].category == "in"?"in transaction-wrapper":"out transaction-wrapper"%>">
-                        <div class="name"><p><%=transactions[index].name%></p></div>
-                        <div class="amount"><p>£<%=transactions[index].amount%></p></div>
+                    <div class="transaction">
+                        <div class="<%=transactions[index].category == "in"?"in transaction-wrapper":"out transaction-wrapper"%>">
+                            <div class="name"><p><%=transactions[index].name%></p></div>
+                            <div class="amount"><p>£<%=transactions[index].amount%></p></div>
+                        </div>
+                        <form action="/delete/<%=transactions[index].id%>" method="POST">
+                            <button class="delete" type="submit">-</button>
+                        </form>
                     </div>
                 <%}%>
             <%}else{%>
@@ -46,6 +58,6 @@
 
 
     </div>
-</body>
+</body> 
 </html>
 <%-include ("partials/footer.ejs")%>
