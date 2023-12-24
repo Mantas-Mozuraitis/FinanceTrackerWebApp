@@ -4,14 +4,16 @@
     <div class="wrapper">
         <!-- NEW DATA INPUT FORM -->
         <form action="/new-transaction" method="POST">
-            <input type="text" id="name" name="name" placeholder="Name of transaction" required>
+            <input type="text" id="name" name="name" placeholder="Name of transaction" value="<%=locals.transaction?transaction.name:""%>" required>
             <select name="category" id="category" required>
-                <option value="in">Money in</option>
-                <option value="out">Money out</option>
+                <option value="in" <%= locals.transaction && transaction.category === "in" ? 'selected' : '' %>>Money in</option>
+                <option value="out" <%= locals.transaction && transaction.category === "out" ? 'selected' : '' %>>Money out</option>
             </select>
-            <input type="amount" id="amount" name="amount" placeholder="Amount of transaction" required>
-    
-            <button type="submit">Add transaction</button>
+            <input type="amount" id="amount" name="amount" placeholder="Amount of transaction" value="<%=locals.transaction?transaction.amount:""%>" required>
+            
+            <button type="submit" formaction="<%= locals.transaction ? '/update-transaction/' + transaction.id : '/new-transaction' %>">
+                <%= locals.transaction ? 'Edit' : 'Add' %> transaction
+            </button>
         </form>
         <!-- SORTING FORM -->
         <form action="/" method="POST">
@@ -59,6 +61,9 @@
                         </div>
                         <form action="/delete/<%=transactions[index].id%>" method="POST">
                             <button class="delete" type="submit">-</button>
+                        </form>
+                        <form action="/edit/<%=transactions[index].id%>" method="POST">
+                            <button class="edit" type="submit">⚙️</button>
                         </form>
                     </div>
                 <%}%>

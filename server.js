@@ -71,6 +71,28 @@ app.post("/currency-exchange", async (req,res)=>{
     res.render("index.ejs", {exchange_rate:exchange_rate, balance:balance, transactions:transactions});
 })
 
+// Post transaction to edit into a form
+app.post("/edit/:id", async (req,res)=>{
+    const transaction = await db.query(`SELECT * FROM transactions WHERE id = ${req.params.id}`);
+    console.log(transaction.rows[0]);
+    res.render("index.ejs",{transaction:transaction.rows[0]});
+})
+
+// Update transaction
+app.post("/update-transaction/:id", async (req,res) => {
+    const updated_name = req.body.name;
+    const updated_category = req.body.category;
+    const updated_amount = req.body.amount;
+    try {
+        await db.query("UPDATE transactions SET name = $1, category = $2, amount = $3 WHERE id = $4", [updated_name, updated_category, updated_amount, req.params.id]);
+        console.log("Update successful");
+        res.redirect("/");
+    } catch (error) {
+        console.error("Error: ", error.message);
+    }
+
+})
+
 app.listen(port, (req,res)=>{
     console.log(`Server is listening on port: ${port}`);
 }) 
