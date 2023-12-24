@@ -43,7 +43,10 @@
         </form>
         <!-- BALANCE DISPLAY -->
         <div class="balance">
-            <p>Balance: £<%=locals.balance?balance:0%></p>
+            <p>Balance: £<%if(locals.balance){%>
+                    <%=locals.exchange_rate?balance*exchange_rate:balance%>
+                <%}%>
+            </p>
         </div>
         <!-- TRANSACTIONS FIELD -->
         <div class="transactions">

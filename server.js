@@ -65,8 +65,10 @@ app.post("/", async (req,res)=>{
 // API request for currency exchange rate
 app.post("/currency-exchange", async (req,res)=>{
     const currency = "GBP";
-    await getCurrencyRate(currency, req.body.currency);
-    res.redirect("/");
+    const exchange_rate = await getCurrencyRate(currency, req.body.currency);
+    const balance = await getBalance();
+    const transactions = await getTransactions();
+    res.render("index.ejs", {exchange_rate:exchange_rate, balance:balance, transactions:transactions});
 })
 
 app.listen(port, (req,res)=>{
