@@ -6,9 +6,9 @@ import dotenv from "dotenv"
 
 // Express server variables
 const app = express();
-const port = 3000;
+const port = 3000;      
 
-// ENV file
+// ENV file 
 dotenv.config();
 
 // Currency API authentication
@@ -25,7 +25,7 @@ const db = new pg.Client({
     database: "finance_tracker",
     password: "password",
     port: 5432,
-})
+}) 
 db.connect();
 
 // body-parser declaration
@@ -61,7 +61,7 @@ app.post("/", async (req,res)=>{
     const balance = await getBalance();
     res.render("index.ejs", sorted!=null?{transactions:sorted, balance:balance}:{});
 })
-
+ 
 // API request for currency exchange rate
 app.post("/currency-exchange", async (req,res)=>{
     const currency = "GBP";
