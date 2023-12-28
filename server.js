@@ -82,9 +82,9 @@ app.post("/edit/:id", async (req,res)=>{
 app.post("/update-transaction/:id", async (req,res) => {
     const updated_name = req.body.name;
     const updated_category = req.body.category;
-    const updated_amount = req.body.amount;
+    const amount = req.body.category === "out"? req.body.amount*-1:req.body.amount;
     try {
-        await db.query("UPDATE transactions SET name = $1, category = $2, amount = $3 WHERE id = $4", [updated_name, updated_category, updated_amount, req.params.id]);
+        await db.query("UPDATE transactions SET name = $1, category = $2, amount = $3 WHERE id = $4", [updated_name, updated_category, amount, req.params.id]);
         console.log("Update successful");
         res.redirect("/");
     } catch (error) {
