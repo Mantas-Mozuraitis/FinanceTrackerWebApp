@@ -73,16 +73,22 @@ app.post("/currency-exchange", async (req,res)=>{
 
 // Post transaction to edit into a form
 app.post("/edit/:id", async (req,res)=>{
-    const transaction = await db.query(`SELECT * FROM transactions WHERE id = ${req.params.id}`);
-    console.log(transaction.rows[0]);
-    res.render("index.ejs",{transaction:transaction.rows[0]});
+    try {
+       const transaction =  await db.query(`SELECT * FROM transactions WHERE id = ${req.params.id}`);
+       const transactions = await getTransactions();
+       const balance = await getBalance();
+       console.log(transaction.rows[0]);
+       res.render("index.ejs", {transaction:transaction.rows[0], transactions:transactions, balance:balance});
+    } catch (error) {
+        console.error("Error:", error.message);
+    }
 })
 
 // Update transaction
 app.post("/update-transaction/:id", async (req,res) => {
     const updated_name = req.body.name;
     const updated_category = req.body.category;
-    const amount = req.body.category === "out"? req.body.amount*-1:req.body.amount;
+    const amount = req.body.category === "out"? req.body.amount*-1:req.body.amount<0?req.body.amount*-1:req.body.amount;
     try {
         await db.query("UPDATE transactions SET name = $1, category = $2, amount = $3 WHERE id = $4", [updated_name, updated_category, amount, req.params.id]);
         console.log("Update successful");

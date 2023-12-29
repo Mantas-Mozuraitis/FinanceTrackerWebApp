@@ -34,6 +34,9 @@ form button{
     cursor: pointer;
 }
 .balance{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 3rem;
     margin: 1rem;
 }
@@ -70,7 +73,7 @@ form button{
     border: #962727 solid 3px;
     color: #962727;
 }
-.delete, .edit{
+.delete-edit{
     background-color: #d4d2d2;
     color: gray;
     padding: 0.5rem 1.2rem;

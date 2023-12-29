@@ -9,7 +9,7 @@
                 <option value="in" <%= locals.transaction && transaction.category === "in" ? 'selected' : '' %>>Money in</option>
                 <option value="out" <%= locals.transaction && transaction.category === "out" ? 'selected' : '' %>>Money out</option>
             </select>
-            <input type="amount" id="amount" name="amount" placeholder="Amount of transaction" value="<%=locals.transaction?transaction.amount:""%>" required>
+            <input type="amount" id="amount" name="amount" placeholder="Amount of transaction" value="<%=locals.transaction?transaction.amount<0?transaction.amount*-1:transaction.amount:""%>" required>
             
             <button type="submit" formaction="<%= locals.transaction ? '/update-transaction/' + transaction.id : '/new-transaction' %>">
                 <%= locals.transaction ? 'Edit' : 'Add' %> transaction
@@ -33,22 +33,22 @@
 
             <button type="submit">Sort</button>
         </form>
-        <form action="/currency-exchange" method="POST">
-            <select name="currency" id="currency" required>
-                <option value="" disabled selected>Select currency</option>
-                <option value="GBP">GBP</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-            </select>
-
-            <button type="submit">Select</button>
-        </form>
         <!-- BALANCE DISPLAY -->
         <div class="balance">
             <p>Balance: £<%if(locals.balance){%>
                     <%=locals.exchange_rate?balance*exchange_rate:balance%>
                 <%}%>
             </p>
+            <form action="/currency-exchange" method="POST">
+                <select name="currency" id="currency" required>
+                    <option value="" disabled selected>Select currency</option>
+                    <option value="GBP">GBP</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                </select>
+    
+                <button type="submit">Select</button>
+            </form>
         </div>
         <!-- TRANSACTIONS FIELD -->
         <div class="transactions">
@@ -60,10 +60,10 @@
                             <div class="amount"><p>£<%=transactions[index].amount%></p></div>
                         </div>
                         <form action="/delete/<%=transactions[index].id%>" method="POST">
-                            <button class="delete" type="submit">-</button>
+                            <button class="delete-edit" type="submit">-</button>
                         </form>
                         <form action="/edit/<%=transactions[index].id%>" method="POST">
-                            <button class="edit" type="submit">⚙️</button>
+                            <button class="delete-edit" type="submit">⚙️</button>
                         </form>
                     </div>
                 <%}%>
